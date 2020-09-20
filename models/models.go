@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/NonePro/blog/pkg/setting"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
 )
 
@@ -33,8 +34,9 @@ func init() {
 	host = section.Key("HOST").String()
 	tablePrefix = section.Key("TABLE_PREFIX").String()
 
-	db, err := gorm.Open(dbType, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
+	db, err = gorm.Open(dbType, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
 		user, password, host, dbName))
+	// 这里有个很隐蔽的坑。如果使用db := 会在这里赋值局部变量，而不是包内的变量db。导致外部无法访问
 	if err != nil {
 		log.Println(err)
 	}
